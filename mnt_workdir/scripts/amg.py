@@ -52,7 +52,7 @@ parser.add_argument(
     help="The path to the SAM checkpoint to use for mask generation.",
 )
 
-parser.add_argument("--device", type=str, default="cpu", help="The device to run generation on.")
+parser.add_argument("--device", type=str, default="cuda", help="The device to run generation on.")
 
 parser.add_argument(
     "--convert-to-rle",
@@ -218,7 +218,6 @@ def main(args: argparse.Namespace) -> None:
             continue
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         masks = generator.generate(image)
-        print('------')
         base = os.path.basename(t)
         base = os.path.splitext(base)[0]
         save_base = os.path.join(args.output, base)
@@ -233,5 +232,8 @@ def main(args: argparse.Namespace) -> None:
 
 
 if __name__ == "__main__":
+    import time
+    start = time.time()
     args = parser.parse_args()
     main(args)
+    print(f'{args.device} elasped ... {time.time()-start}')
