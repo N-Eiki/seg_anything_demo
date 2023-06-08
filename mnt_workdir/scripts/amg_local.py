@@ -12,6 +12,7 @@ import argparse
 import json
 import os
 from typing import Any, Dict, List
+import time
 
 parser = argparse.ArgumentParser(
     description=(
@@ -24,14 +25,14 @@ parser = argparse.ArgumentParser(
 parser.add_argument(
     "--input",
     type=str,
-    default='/mnt/imgs/nobiru.jpg',
+    default='/Users/n.eiki/source/poetry_seg_anything/mnt_workdir/imgs/nobiru.jpg',
     help="Path to either a single input image or folder of images.",
 )
 
 parser.add_argument(
     "--output",
     type=str,
-    default='/mnt/output/',
+    default='/Users/n.eiki/source/poetry_seg_anything/mnt_workdir/output/',
     help=(
         "Path to the directory where masks will be output. Output will be either a folder "
         "of PNGs per image or a single json with COCO-style masks."
@@ -48,11 +49,11 @@ parser.add_argument(
 parser.add_argument(
     "--checkpoint",
     type=str,
-    default="/mnt/ckpt/sam_vit_h_4b8939.pth",
+    default="/Users/n.eiki/source/poetry_seg_anything/mnt_workdir/ckpt/sam_vit_h_4b8939.pth",
     help="The path to the SAM checkpoint to use for mask generation.",
 )
 
-parser.add_argument("--device", type=str, default="cuda", help="The device to run generation on.")
+parser.add_argument("--device", type=str, default="cpu", help="The device to run generation on.")
 
 parser.add_argument(
     "--convert-to-rle",
@@ -193,6 +194,7 @@ def get_amg_kwargs(args):
 
 
 def main(args: argparse.Namespace) -> None:
+    start = time.time()
     print("Loading model...")
     sam = sam_model_registry[args.model_type](checkpoint=args.checkpoint)
     _ = sam.to(device=args.device)
@@ -219,6 +221,7 @@ def main(args: argparse.Namespace) -> None:
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         print('=======')
         masks = generator.generate(image)
+        print('------')
         base = os.path.basename(t)
         base = os.path.splitext(base)[0]
         save_base = os.path.join(args.output, base)
@@ -230,11 +233,9 @@ def main(args: argparse.Namespace) -> None:
             with open(save_file, "w") as f:
                 json.dump(masks, f)
     print("Done!")
+    print(f'elasped time ...{time.time() - start}')
 
 
 if __name__ == "__main__":
-    import time
-    start = time.time()
     args = parser.parse_args()
     main(args)
-    print(f'{args.device} elasped ... {time.time()-start}')
