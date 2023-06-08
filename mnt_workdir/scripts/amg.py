@@ -217,6 +217,7 @@ def main(args: argparse.Namespace) -> None:
             print(f"Could not load '{t}' as an image, skipping...")
             continue
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        print('=======')
         masks = generator.generate(image)
         print('------')
         base = os.path.basename(t)
