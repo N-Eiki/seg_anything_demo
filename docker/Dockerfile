@@ -1,6 +1,8 @@
-FROM ubuntu:20.04
-
+# FROM ubuntu:20.04
+FROM nvidia/cuda:12.1.1-devel-ubuntu20.04
 # ENV
+# ENV USE_OPENMP 1
+
 ENV TZ=Asia/Tokyo
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
@@ -53,4 +55,4 @@ RUN cat requirements.txt | xargs poetry add
 RUN rm requirements.txt
 RUN git clone https://github.com/facebookresearch/segment-anything.git
 
-# WORKDIR /workdir/poetry_seg_anything/segment-anything
+WORKDIR /workdir/poetry_seg_anything/segment-anything
