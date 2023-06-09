@@ -6,7 +6,7 @@ def get_parser():
             "Runs automatic mask generation on an input image or directory of images, "
             "and outputs masks as either PNGs or COCO-style RLEs. Requires open-cv, "
             "as well as pycocotools if saving in RLE format."
-        )
+            )
     )
 
     parser.add_argument(
@@ -36,11 +36,11 @@ def get_parser():
     parser.add_argument(
         "--checkpoint",
         type=str,
-        default="/mnt/ckpt/sam_vit_h_4b8939.pth",
+        default="/mnt/ckpt/sam_vit_l_0b3195.pth",
         help="The path to the SAM checkpoint to use for mask generation.",
     )
 
-    parser.add_argument("--device", type=str, default="cpu", help="The device to run generation on.")
+    parser.add_argument("--device", type=str, default="cuda", help="The device to run generation on.")
 
     parser.add_argument(
         "--convert-to-rle",

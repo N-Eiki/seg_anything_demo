@@ -22,8 +22,10 @@ image_path2 = "/mnt/imgs/bujiramioya.jpg"
 class ClickBoard:
     def __init__(self, args):
         # 画像のリサイズ
-        self.max_width = 800  # 表示する画像の最大幅
-        self.max_height= 800  # 表示する画像の最大高さ
+        self.max_width = 400  # 表示する画像の最大幅
+        self.max_height= 400  # 表示する画像の最大高さ
+        self.sub_max_width = 400
+        self.sub_max_height = 400
         self.mode = 1
         self.point_dict = {'add':[], 'remove':[]}
         self.model = InferBot(args)
@@ -38,8 +40,8 @@ class ClickBoard:
             self.point_dict['add'].append([target_w, target_h])
         elif self.mode=='remove':
             self.point_dict['remove'].append([target_w, target_h])
-        elif self.mode=='clear':
-            self.point_dict = {'add':[], 'remove':[]}
+        # elif self.mode=='clear':
+        #     self.point_dict = {'add':[], 'remove':[]}
         print(f"mode {self.mode} Clicked at pixel coordinates: ({target_w}, {target_h}) ")
 
 
@@ -60,9 +62,33 @@ class ClickBoard:
 
         # ウィンドウの作成
         window = Toplevel(root)
-        window.title("Mode Selector")
+        window.title("Clicker: click right image")
         # window = Tk()
         # window.title("Image Viewer")
+
+        
+
+        # キャンバスの作成
+        self.canvas = Canvas(window, width=canvas_width, height=canvas_height)
+        self.canvas.pack(side='right')
+
+        # 画像の表示
+        self.image_tk = ImageTk.PhotoImage(image)
+        self.canvas.create_image(0, 0, anchor="nw", image=self.image_tk)
+
+        # キャンバス2の作成
+        image.thumbnail((self.sub_max_width, self.sub_max_height))
+
+        # 画像の表示サイズ
+        canvas2_width = image.width
+        canvas2_height = image.height
+
+        self.canvas2 = Canvas(window, width=canvas2_width, height=canvas2_height)
+        self.canvas2.pack()
+
+        # 画像2の表示
+        self.image_tk2 = ImageTk.PhotoImage(image)
+        self.canvas2.create_image(0, 0, anchor="nw", image=self.image_tk2)
         # モード切り替えボタンの作成
         mode1_button = Button(window, text="add", command=self.set_mode_1)
         mode1_button.pack(side='left')
@@ -70,18 +96,10 @@ class ClickBoard:
         mode2_button.pack(side='left')
         mode3_button = Button(window, text="apply", command=self.set_mode_3)
         mode3_button.pack(side='left')
-        mode4_button = Button(window, text="clear", command=self.set_mode_3)
+        mode4_button = Button(window, text="clear", command=self.set_mode_4)
         mode4_button.pack(side='left')
-        mode5_button = Button(window, text="next", command=self.set_mode_3)
+        mode5_button = Button(window, text="next", command=self.set_mode_5)
         mode5_button.pack(side='left')
-
-        # キャンバスの作成
-        self.canvas = Canvas(window, width=canvas_width, height=canvas_height)
-        self.canvas.pack()
-
-        # 画像の表示
-        self.image_tk = ImageTk.PhotoImage(image)
-        self.canvas.create_image(0, 0, anchor="nw", image=self.image_tk)
 
         # クリックイベントのバインディング
         self.canvas.bind("<Button-1>", self.on_pixel_click)
@@ -114,6 +132,7 @@ class ClickBoard:
 
     def set_mode_4(self):
         self.mode = 'clear'
+        self.point_dict = {'add':[], 'remove':[]}
 
     def set_mode_5(self):
         self.mode = 'next'
