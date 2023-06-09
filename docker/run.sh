@@ -1,14 +1,12 @@
 #!/bin/bash
+# export DISPLAY="$(grep nameserver /etc/resolv.conf | sed 's/nameserver //'):0.0"
+export DISPLAY=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2}'):0.0
 xhost +
-# /opt/X11/bin/xhost +
-
-docker run -it --privileged\
-    -m 15g\
+docker run --gpus all -it --rm --privileged\
     --env="DISPLAY=host.docker.internal:0" \
     -v $HOME/.Xauthority:/root/.Xauthority \
-    -v /Users/n.eiki/source/poetry_seg_anything/mnt_workdir:/mnt\
-    -v /Users/n.eiki/source/poetry_seg_anything/segment-anything/:/workdir/poetry_seg_anything/segment-anything \
-    --name seg_anything poetry_docker_py38 bash 
+    -v /home/eiki/seg_anything_demo/mnt_workdir:/mnt\
+    --name seg_anything poetry_docker_py39 bash 
 
 #   poetry run python scripts/amg.py --checkpoint /mnt/ckpt/sam_vit_h_4b8939.pth --model-type default --input /mnt/imgs/ノビル.jpg --output /mnt/output/
 

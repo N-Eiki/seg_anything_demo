@@ -1,1 +1,1 @@
-docker build -t poetry_docker_py38 .
+docker build -t poetry_docker_py39 .

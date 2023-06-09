@@ -1,5 +1,7 @@
 # FROM ubuntu:20.04
-FROM nvidia/cuda:12.1.1-devel-ubuntu20.04
+# FROM nvidia/cuda:12.1.1-devel-ubuntu20.04
+FROM nvidia/cuda:11.7.0-devel-ubuntu20.04
+
 # ENV
 # ENV USE_OPENMP 1
 
@@ -30,11 +32,19 @@ RUN apt-get update \
 #python install
 RUN apt-get update \
     && apt-get install --no-install-recommends -y \
-        python3.8 \
-        python3.8-dev \
+        python3.9 \
+        python3.9-dev \
         python3-pip \
-        python3.8-venv\
+        python3.9-venv\
         python3-tk
+
+### windows
+RUN apt-get update -y\
+ && apt-get install x11-apps -y
+ENV DISPLAY host.docker.internal:0.0
+
+RUN useradd -ms /bin/bash xuser
+
 
 # コンテナにアクセスした際のデフォルトディレクトリ
 WORKDIR workdir
